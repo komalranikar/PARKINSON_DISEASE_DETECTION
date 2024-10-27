@@ -1,7 +1,7 @@
 # Import necessary libraries
 import pickle
 import streamlit as st
-from streamlit_option_menu import option_menu 
+from streamlit_option_menu import option_menu
 
 # Load the saved Parkinson's disease prediction model
 parkinsons_model = pickle.load(open('parkinsons_model.sav', 'rb'))
@@ -25,67 +25,46 @@ if selected == "Parkinsons Prediction":
 
     with col1:
         fo = st.text_input('MDVP:Fo(Hz)')
-
     with col2:
         fhi = st.text_input('MDVP:Fhi(Hz)')
-
     with col3:
         flo = st.text_input('MDVP:Flo(Hz)')
-
     with col4:
         Jitter_percent = st.text_input('MDVP:Jitter(%)')
-
     with col5:
         Jitter_Abs = st.text_input('MDVP:Jitter(Abs)')
-
     with col1:
         RAP = st.text_input('MDVP:RAP')
-
     with col2:
         PPQ = st.text_input('MDVP:PPQ')
-
     with col3:
         DDP = st.text_input('Jitter:DDP')
-
     with col4:
         Shimmer = st.text_input('MDVP:Shimmer')
-
     with col5:
         Shimmer_dB = st.text_input('MDVP:Shimmer(dB)')
-
     with col1:
         APQ3 = st.text_input('Shimmer:APQ3')
-
     with col2:
         APQ5 = st.text_input('Shimmer:APQ5')
-
     with col3:
         APQ = st.text_input('MDVP:APQ')
-
     with col4:
         DDA = st.text_input('Shimmer:DDA')
-
     with col5:
         NHR = st.text_input('NHR')
-
     with col1:
         HNR = st.text_input('HNR')
-
     with col2:
         RPDE = st.text_input('RPDE')
-
     with col3:
         DFA = st.text_input('DFA')
-
     with col4:
         spread1 = st.text_input('spread1')
-
     with col5:
         spread2 = st.text_input('spread2')
-
     with col1:
         D2 = st.text_input('D2')
-
     with col2:
         PPE = st.text_input('PPE')
 
@@ -94,16 +73,26 @@ if selected == "Parkinsons Prediction":
 
     # Prediction button
     if st.button("Parkinson's Test Result"):
-        # Predict using the input data
-        parkinsons_prediction = parkinsons_model.predict([[fo, fhi, flo, Jitter_percent, Jitter_Abs, RAP, PPQ,
-                                                           DDP, Shimmer, Shimmer_dB, APQ3, APQ5, APQ, DDA,
-                                                           NHR, HNR, RPDE, DFA, spread1, spread2, D2, PPE]])
+        try:
+            # Convert inputs to float
+            input_data = [
+                float(fo), float(fhi), float(flo), float(Jitter_percent), float(Jitter_Abs),
+                float(RAP), float(PPQ), float(DDP), float(Shimmer), float(Shimmer_dB),
+                float(APQ3), float(APQ5), float(APQ), float(DDA), float(NHR),
+                float(HNR), float(RPDE), float(DFA), float(spread1), float(spread2),
+                float(D2), float(PPE)
+            ]
 
-        # Determine the result
-        if parkinsons_prediction[0] == 1:
-            parkinsons_diagnosis = "The person has Parkinson's disease"
-        else:
-            parkinsons_diagnosis = "The person does not have Parkinson's disease"
+            # Predict using the input data
+            parkinsons_prediction = parkinsons_model.predict([input_data])
 
-        # Display the result
-        st.success(parkinsons_diagnosis)
+            # Determine the result
+            if parkinsons_prediction[0] == 1:
+                parkinsons_diagnosis = "The person has Parkinson's disease"
+            else:
+                parkinsons_diagnosis = "The person does not have Parkinson's disease"
+
+            # Display the result
+            st.success(parkinsons_diagnosis)
+        except ValueError:
+            st.error("Please enter valid numeric values for all parameters.")
